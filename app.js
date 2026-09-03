@@ -1,9 +1,10 @@
 import {icon,cat,bricks} from './icons.js';
-import {unlock,sound,narrate,stopSpeech,setMuted,audioStats} from './audio.js';
+import {unlock,sound,narrate,stopSpeech,audioStats} from './audio.js';
+import './volume-control.js';
 import {request,subscribe} from './transport.js';
 const $=id=>document.getElementById(id);
 function textIfChanged(el,value){if(el.textContent!==value)el.textContent=value;}
-let state=null, queue=Promise.resolve(), inflight=0, muted=false, practiceSchool=true, noticeTimer, partyTimer;
+let state=null, queue=Promise.resolve(), inflight=0, practiceSchool=true, noticeTimer, partyTimer;
 const pointers=new Map(), rows=new Map(), metrics={feedback:[], commits:[], frames:[], errors:[], gestures:0};
 const partyNames=new Set();
 const reduced=matchMedia('(prefers-reduced-motion: reduce)');
@@ -164,9 +165,6 @@ function complete(row,done){
     finally{inflight--;}
   });
 }
-function muteRender(){$('mute').innerHTML=icon(muted?'mute':'speaker');$('mute').setAttribute('aria-pressed',String(muted));$('mute').setAttribute('aria-label',muted?'Unmute celebration sounds':'Mute celebration sounds');}
-$('mute').addEventListener('click',()=>{muted=!muted;setMuted(muted);try{localStorage.setItem('routines-muted',String(muted));}catch{}muteRender();notice(muted?'Celebrations are quiet. Tap-to-hear still works.':'Celebration sounds are on.');});
-try{muted=localStorage.getItem('routines-muted')==='true';}catch{}setMuted(muted);muteRender();
 $('practice-open').addEventListener('click',()=>$('practice-dialog').showModal());
 $('practice-cancel').addEventListener('click',()=>$('practice-dialog').close());
 for(const button of document.querySelectorAll('[data-kind]'))button.addEventListener('click',()=>{practiceSchool=button.dataset.kind==='school';for(const b of document.querySelectorAll('[data-kind]'))b.setAttribute('aria-pressed',String(b===button));document.querySelector('[data-routine="afternoon"]').disabled=!practiceSchool;});

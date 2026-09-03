@@ -18,7 +18,15 @@
     <div class="period-icon" id="period-icon" aria-hidden="true"></div>
     <div class="heading"><h1 id="greeting">Little by little</h1><p id="day-label">A little more independent, every day.</p></div>
     <div class="clock" id="clock"></div>
-    <button class="sound-button" id="mute" aria-label="Mute celebration sounds" aria-pressed="false"></button>
+    <div class="sound-control" id="sound-control">
+      <button class="sound-button" id="volume-button" aria-label="Volume, 70%" aria-expanded="false" aria-controls="volume-panel"></button>
+      <div class="volume-panel" id="volume-panel" role="group" aria-labelledby="volume-title" hidden>
+        <div class="volume-heading"><label id="volume-title" for="volume-slider">Volume</label><output id="volume-value" for="volume-slider">70%</output></div>
+        <input id="volume-slider" type="range" min="0" max="100" step="1" value="70" aria-valuetext="70 percent">
+        <div class="volume-ends" aria-hidden="true"><span>0</span><span>100</span></div>
+        <p id="volume-status" role="status"></p>
+      </div>
+    </div>
   </header>
   <main id="board" aria-label="Our routines"></main>
   <section id="pause" hidden>

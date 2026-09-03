@@ -1,4 +1,4 @@
-// Static preview: this module has no network, device, calendar or storage access.
+// Static preview: no device/calendar access. Only the volume preference is stored.
 import {scenarios,graceSeconds,celebrationSeconds} from './scenarios.js';
 let current,selected,listeners=[],serial=0,started,closeDeadline=null;
 let awards=new Set(),celebrated=new Set();
@@ -50,4 +50,16 @@ export async function request(path,body){
     }
   }else{closeDeadline=null;current.close_at=null;}
   return {ok:true,payload:{state:snapshot(),reward,celebrate,child:child.id}};
+}
+import {setVolume} from './audio.js';
+let previewVolume=70;
+export async function readVolume(){
+  try{const stored=localStorage.getItem('routines-volume');const number=Number(stored);if(stored!==null&&Number.isInteger(number)&&number>=0&&number<=100)previewVolume=number;}catch{}
+  setVolume(previewVolume);return previewVolume;
+}
+export async function writeVolume(percent){
+  if(!Number.isInteger(percent)||percent<0||percent>100)throw new Error('Invalid volume');
+  previewVolume=percent;setVolume(percent);
+  try{localStorage.setItem('routines-volume',String(percent));}catch{}
+  return percent;
 }

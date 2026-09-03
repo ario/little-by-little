@@ -9,6 +9,7 @@ button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 .preview-tools select{flex:1;min-width:0;height:40px;border:1px solid var(--control-line);border-radius:10px;background:var(--control-fill);color:var(--control-text);font:inherit;font-size:16px;padding:0 8px}
 .preview-tools button{background:transparent;color:var(--control-text);min-height:44px;min-width:44px;font-weight:bold;font-size:13px}
 .topbar{height:76px;padding:10px 16px;gap:10px}
+.sound-control{margin-left:auto}
 .period-icon{width:44px;height:44px}.heading h1{font-size:24px;letter-spacing:-.8px}.heading p{font-size:12px;margin-top:4px}.clock{display:none}.sound-button{width:44px;height:44px;margin-left:auto;padding:9px}
 #board{max-width:700px;margin:0 auto}
 .child{height:auto;min-height:calc((var(--viewport-height) - 132px)/2);padding:8px 14px 13px}

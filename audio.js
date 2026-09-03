@@ -1,9 +1,22 @@
-let context, muted = false, speech, speechNodes, speechToken = 0;
+let context, master, volume = 1, speech, speechLevel = 1, speechNodes, speechToken = 0;
 const voiceBuffers=new Map();
 export const audioStats = {sounds:0, narrations:0, playbackStarts:0, lastNarration:null, errors:0};
-export function setMuted(value){ muted=value; }
+export function setVolume(percent){
+  volume=Math.max(0,Math.min(100,Number(percent)))/100;
+  audioStats.volumePercent=Math.round(volume*100);
+  if(master){
+    master.gain.cancelScheduledValues(context.currentTime);
+    if(volume===0)master.gain.setValueAtTime(0,context.currentTime);
+    else master.gain.setTargetAtTime(volume,context.currentTime,.015);
+  }
+  if(speech)speech.volume=speechLevel*volume;
+}
 export function unlock(){
-  try { context ||= new AudioContext(); if(context.state==='suspended') context.resume(); } catch { /* Voice files work even if Web Audio is unavailable. */ }
+  try {
+    context ||= new AudioContext();
+    if(!master){master=context.createGain();master.gain.value=volume;master.connect(context.destination);}
+    if(context.state==='suspended')context.resume();
+  } catch { /* Voice files work even if Web Audio is unavailable. */ }
 }
 function tone(frequency,time,length,type,gain,endFrequency){
   if(!context)return;
@@ -12,11 +25,11 @@ function tone(frequency,time,length,type,gain,endFrequency){
   if(endFrequency)osc.frequency.exponentialRampToValueAtTime(endFrequency,time+length);
   env.gain.setValueAtTime(0,time);env.gain.linearRampToValueAtTime(gain,time+.012);
   env.gain.exponentialRampToValueAtTime(.0001,time+length);
-  osc.connect(env).connect(context.destination);osc.start(time);osc.stop(time+length+.02);
+  osc.connect(env).connect(master);osc.start(time);osc.stop(time+length+.02);
   osc.onended=()=>{osc.disconnect();env.disconnect();};
 }
 export function sound(period,party=false){
-  if(muted)return;unlock();if(!context)return;
+  if(volume===0)return;unlock();if(!context)return;
   audioStats.sounds++;const t=context.currentTime+.015,g=period==='evening'?.023:.065;
   if(party){[523.25,659.25,783.99,1046.5].forEach((n,i)=>{tone(n,t+i*.15,i===3?.62:.19,'triangle',g*1.4);tone(n*2,t+i*.15,.17,'sawtooth',g*.17);});return;}
   const pick=Math.floor(Math.random()*6);
@@ -52,11 +65,11 @@ export async function narrate(task,period,onError){
       if(token!==speechToken)return;
       await context.resume();if(token!==speechToken)return;
       const source=context.createBufferSource(),gain=context.createGain();
-      source.buffer=buffer;gain.gain.value=level;source.connect(gain).connect(context.destination);
+      source.buffer=buffer;gain.gain.value=level;source.connect(gain).connect(master);
       speechNodes={source,gain};source.onended=()=>{if(token===speechToken)stopSpeech();};
       source.start();audioStats.playbackStarts++;
     }else{
-      speech=new Audio(url);speech.volume=level;
+      speech=new Audio(url);speechLevel=level;speech.volume=level*volume;
       speech.addEventListener('playing',()=>{audioStats.playbackStarts++;},{once:true});
       speech.addEventListener('ended',()=>{if(token===speechToken)stopSpeech();},{once:true});
       await speech.play();
