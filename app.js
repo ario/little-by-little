@@ -204,12 +204,27 @@ function switchMode(calendar){
 $('mode-calendar').addEventListener('click',()=>switchMode(true));
 $('mode-todos').addEventListener('click',()=>switchMode(false));
 $('practice-open').addEventListener('click',()=>$('practice-dialog').showModal());
-$('parent-open').addEventListener('click',async()=>{
-  $('parent-code').textContent='…';$('parent-dialog').showModal();
-  try{const p=await api('/api/parent/pair',{});$('parent-code').textContent=p.code;$('parent-pair-status').textContent='Valid for five minutes. Each phone gets its own code.';}
-  catch(e){$('parent-code').textContent='';$('parent-pair-status').textContent=e.message;}
-});
-$('parent-close').addEventListener('click',()=>{$('parent-dialog').close();$('parent-code').textContent='';});
+let parentPair=null,parentPoll=null,parentRequest=0;
+async function updateParentPair(){
+ if(!$('parent-dialog').open||!parentPair)return;
+ const pair=parentPair;
+ try{const status=await api('/api/parent/pair-status',{id:pair.id});if(!$('parent-dialog').open||parentPair!==pair)return;
+  if(status.status==='connected'){$('parent-code').textContent='✓';$('parent-pair-status').textContent='Phone connected. Tap New code to connect another phone.';return;}
+  if(status.status==='expired'){$('parent-code').textContent='Expired';$('parent-pair-status').textContent='Tap New code, or use Resend code through Molty on your phone.';return;}
+  const seconds=Math.max(0,Math.ceil(status.expires-Date.now()/1000));$('parent-pair-status').textContent=`Valid for ${Math.floor(seconds/60)}:${String(seconds%60).padStart(2,'0')}. One phone per code.`;
+ }catch{if(parentPair!==pair)return;$('parent-pair-status').textContent='Reconnecting… This code stays valid until it expires.';}
+ parentPoll=setTimeout(updateParentPair,2000);
+}
+async function newParentPair(){
+ const request=++parentRequest;clearTimeout(parentPoll);parentPair=null;$('parent-code').textContent='…';$('parent-new-code').disabled=true;
+ try{const p=await api('/api/parent/pair',{});if(request!==parentRequest||!$('parent-dialog').open)return;parentPair=p;$('parent-code').textContent=p.code;updateParentPair();}
+ catch(e){$('parent-code').textContent='';$('parent-pair-status').textContent=e.message;}
+ finally{$('parent-new-code').disabled=false;}
+}
+$('parent-open').addEventListener('click',()=>{$('parent-dialog').showModal();newParentPair();});
+$('parent-new-code').addEventListener('click',newParentPair);
+$('parent-close').addEventListener('click',()=>$('parent-dialog').close());
+$('parent-dialog').addEventListener('close',()=>{parentRequest++;clearTimeout(parentPoll);parentPair=null;$('parent-code').textContent='';});
 $('practice-cancel').addEventListener('click',()=>$('practice-dialog').close());
 for(const button of document.querySelectorAll('[data-kind]'))button.addEventListener('click',()=>{practiceSchool=button.dataset.kind==='school';for(const b of document.querySelectorAll('[data-kind]'))b.setAttribute('aria-pressed',String(b===button));document.querySelector('[data-routine="afternoon"]').disabled=!practiceSchool;});
 for(const button of document.querySelectorAll('[data-routine]'))button.addEventListener('click',async()=>{try{const s=await api('/api/practice',{routine:button.dataset.routine,school:practiceSchool});$('practice-dialog').close();render(s,true);}catch(e){notice(e.message);}});
