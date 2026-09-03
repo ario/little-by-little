@@ -5,6 +5,7 @@ const icons = {
   clothes: '<path d="m24 14-16 13 11 15 9-6v31h30V36l8 6 10-15-17-13H47c-1 10-9 10-11 0Z" fill="#F3BE72"/><path d="M36 14c1 10 10 10 11 0M37 43h12M28 59h30"/>',
   breakfast: '<circle cx="39" cy="42" r="25" fill="#F7D68C"/><circle cx="39" cy="42" r="18" fill="#fff"/><path d="M24 45c-5-16 14-26 22-11 14-2 16 17 3 20-12 7-26 3-25-9Z" fill="#FFF4C1"/><circle cx="38" cy="43" r="7" fill="#F3B344"/><path d="M7 18v49M71 18v49M66 18v15h10V18"/>',
   backpack: '<path d="M31 18v-5c0-8 20-8 20 0v5"/><path d="M18 29c0-19 44-19 44 0v36c0 5-44 5-44 0Z" fill="#91CBDC"/><rect x="25" y="41" width="30" height="21" rx="6" fill="#F7BC70"/><path d="M26 46h28M39 26h3M14 31v27M66 31v27"/>',
+  'snack-water': '<rect x="6" y="32" width="40" height="34" rx="7" fill="#F5BE6E"/><path d="M6 43h40M18 31v-8h16v8"/><path d="M54 20h15v9l5 7v29H49V36l5-7Z" fill="#91CBDC"/><rect x="54" y="12" width="15" height="8" rx="2" fill="#A6D9E7"/><path d="M50 43h23M20 49l5 8 9-10"/>',
   hair: '<rect x="21" y="11" width="34" height="39" rx="14" fill="#EBA9C5"/><path d="M31 49v20h13V49M28 19v20M35 17v24M42 17v24M49 19v20"/>',
   light: '<path d="M25 43c-20-23 4-42 20-34 18 7 16 24 6 34-5 4-5 9-5 11H32c0-5-3-9-7-11Z" fill="#FFE19A"/><path d="M32 54h14v9H32zM35 68h9M38 49V31m0 6-7-6m7 6 7-6M9 25H3M14 9 9 4M59 8l5-5M66 26h8"/>',
   shoes: '<path d="M9 28h17l7 12 25 9c14 5 14 17 2 17H15c-9 0-10-6-6-14Z" fill="#F4B170"/><path d="M8 59h61M26 40l10-6M34 46l9-6M45 49l8-5M20 28v13"/><path d="M48 12h22v24M58 23l12 13 8-12"/>',

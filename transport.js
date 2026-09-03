@@ -38,10 +38,10 @@ export async function request(path,body){
     return {ok:false,payload:{error:'This preview has changed. Try again.',state:snapshot()}};
   }
   const key=`${child.id}:${task.id}`,reward=body.done&&!awards.has(key);
-  task.done=body.done;task.version++;current.revision++;
+  const wasDone=task.done;task.done=body.done;task.version++;current.revision++;
   if(body.done)awards.add(key);
   child.complete=child.tasks.every(t=>t.done);
-  const celebrate=child.complete&&!celebrated.has(child.id);
+  const celebrate=child.complete&&body.done&&!wasDone;
   if(celebrate)celebrated.add(child.id);
   if(current.children.every(c=>c.complete)){
     if(closeDeadline===null){

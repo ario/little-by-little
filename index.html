@@ -18,6 +18,7 @@
     <div class="period-icon" id="period-icon" aria-hidden="true"></div>
     <div class="heading"><h1 id="greeting">Little by little</h1><p id="day-label">A little more independent, every day.</p></div>
     <div class="clock" id="clock"></div>
+    <button class="parent-button" id="parent-open">Parents</button>
     <div class="sound-control" id="sound-control">
       <button class="sound-button" id="volume-button" aria-label="Volume, 70%" aria-expanded="false" aria-controls="volume-panel"></button>
       <div class="volume-panel" id="volume-panel" role="group" aria-labelledby="volume-title" hidden>
@@ -43,6 +44,7 @@
   <div id="notice" role="status" aria-live="polite"></div>
   <div id="party" aria-hidden="true"><div class="party-label"><span id="party-kicker">Look at you go!</span><strong id="party-name"></strong><span>All done!</span></div></div>
   <canvas id="confetti" aria-hidden="true"></canvas>
+  <dialog id="parent-dialog"><h2>Connect a parent phone</h2><p>Open <strong>routines.glide.day</strong> on your phone.</p><p>Enter this code:</p><strong id="parent-code"></strong><p id="parent-pair-status">Valid for five minutes. Each phone gets its own code.</p><button id="parent-close">Done</button></dialog>
   <dialog id="practice-dialog"><h2>Let’s try it out</h2><p>Practice has its own fresh list.</p><div class="practice-kind"><button data-kind="school" aria-pressed="true">School day</button><button data-kind="dayoff" aria-pressed="false">Day off</button></div><div class="practice-choices"><button data-routine="morning">Morning</button><button data-routine="afternoon">Coming home</button><button data-routine="evening">Bedtime</button></div><button class="text-button" id="practice-cancel">Go back</button></dialog>
   <script type="module" src="./app.js"></script>
 </body>
