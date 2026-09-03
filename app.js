@@ -1,6 +1,7 @@
 import {icon,cat,bricks} from './icons.js';
 import {unlock,sound,narrate,stopSpeech,audioStats} from './audio.js';
 import './volume-control.js';
+import {showCalendar,calendarVisible} from './calendar.js';
 import {request,subscribe} from './transport.js';
 const $=id=>document.getElementById(id);
 function textIfChanged(el,value){if(el.textContent!==value)el.textContent=value;}
@@ -95,7 +96,7 @@ function buildChild(child){
 }
 const backgroundPointers=new Map();
 document.addEventListener('pointerdown',e=>{
-  if(!e.target.closest('.child')||e.target.closest('button,input,select,a,dialog'))return;
+  if(e.target.closest('.calendar-child')||!e.target.closest('.child')||e.target.closest('button,input,select,a,dialog'))return;
   backgroundPointers.set(e.pointerId,{x:e.clientX,y:e.clientY,at:performance.now(),child:e.target.closest('.child')});
 });
 document.addEventListener('pointercancel',e=>backgroundPointers.delete(e.pointerId));
@@ -196,6 +197,12 @@ function complete(row,done){
     finally{inflight--;}
   });
 }
+function switchMode(calendar){
+  for(const p of pointers.values())resetDrag(p.row);pointers.clear();stopSpeech();
+  showCalendar(calendar);$('mode-calendar').setAttribute('aria-pressed',String(calendar));$('mode-todos').setAttribute('aria-pressed',String(!calendar));
+}
+$('mode-calendar').addEventListener('click',()=>switchMode(true));
+$('mode-todos').addEventListener('click',()=>switchMode(false));
 $('practice-open').addEventListener('click',()=>$('practice-dialog').showModal());
 $('parent-open').addEventListener('click',async()=>{
   $('parent-code').textContent='…';$('parent-dialog').showModal();

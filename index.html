@@ -10,6 +10,7 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="./calendar.css">
   <link rel="stylesheet" href="./preview.css">
 </head>
 <body data-period="morning">
@@ -17,6 +18,7 @@
   <header class="topbar">
     <div class="period-icon" id="period-icon" aria-hidden="true"></div>
     <div class="heading"><h1 id="greeting">Little by little</h1><p id="day-label">A little more independent, every day.</p></div>
+    <nav class="mode-switch" aria-label="Choose a view"><button id="mode-calendar" aria-pressed="false">Calendar</button><button id="mode-todos" aria-pressed="true">To do’s</button></nav>
     <div class="clock" id="clock"></div>
     <button class="parent-button" id="parent-open">Parents</button>
     <div class="sound-control" id="sound-control">
@@ -29,6 +31,7 @@
       </div>
     </div>
   </header>
+  <main id="calendar-board" aria-label="Our calendars" hidden></main>
   <main id="board" aria-label="Our routines"></main>
   <section id="pause" hidden>
     <div class="pause-art" id="pause-art"></div>

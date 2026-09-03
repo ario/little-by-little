@@ -63,3 +63,5 @@ export async function writeVolume(percent){
   try{localStorage.setItem('routines-volume',String(percent));}catch{}
   return percent;
 }
+
+export {demoCalendar as readCalendar,demoVoice as calendarVoice} from './calendar-demo.js';

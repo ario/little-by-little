@@ -15,6 +15,7 @@ export const audioStats = {sounds:0, narrations:0, playbackStarts:0, lastNarrati
 export function setVolume(percent){
   volume=Math.max(0,Math.min(100,Number(percent)))/100;
   audioStats.volumePercent=Math.round(volume*100);
+  if(volume===0&&'speechSynthesis' in window)window.speechSynthesis.cancel();
   if(master){
     master.gain.cancelScheduledValues(context.currentTime);
     if(volume===0)master.gain.setValueAtTime(0,context.currentTime);
@@ -60,6 +61,7 @@ export function sound(period,party=false){
   if(effect===9){[0,.13,.26].forEach((a,i)=>tone(900-i*170,t+a,.13,'triangle',g*.55,300-i*50));}
 }
 export function stopSpeech(){
+  if('speechSynthesis' in window)window.speechSynthesis.cancel();
   speechToken++;
   if(speech){speech.pause();speech.currentTime=0;speech=null;}
   if(speechNodes){try{speechNodes.source.stop();}catch{}speechNodes.source.disconnect();speechNodes.gain.disconnect();speechNodes=null;}
@@ -95,4 +97,22 @@ export async function narrate(task,period,onError){
       await speech.play();
     }
   }catch{if(token===speechToken){audioStats.errors++;onError('The voice couldn’t play. Tap to try again.');}}
+}
+
+// Dynamic calendar speech shares the same master gain and cancellation token as tasks.
+export async function narrateCalendar(load,period,onError){
+  stopSpeech();const token=speechToken;unlock();
+  try{
+    const result=await load();if(token!==speechToken)return;
+    if(result.text&&'speechSynthesis' in window){
+      const words=new SpeechSynthesisUtterance(result.text);words.volume=volume*(period==='evening'?.55:.85);words.rate=.88;
+      window.speechSynthesis.speak(words);return;
+    }
+    if(!context)throw new Error('Audio unavailable');
+    const raw=Uint8Array.from(atob(result.audio),c=>c.charCodeAt(0));
+    const buffer=await context.decodeAudioData(raw.buffer);if(token!==speechToken)return;
+    await context.resume();if(token!==speechToken)return;
+    const source=context.createBufferSource(),gain=context.createGain();source.buffer=buffer;gain.gain.value=period==='evening'?.55:.85;source.connect(gain).connect(master);speechNodes={source,gain};source.onended=()=>{if(token===speechToken)stopSpeech();};source.start();audioStats.playbackStarts++;
+  }catch{if(token===speechToken){onError('The voice couldn’t play. Tap to try again.');return false;}}
+  return true;
 }
