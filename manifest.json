@@ -1,0 +1,29 @@
+{
+  "name": "Little by little preview",
+  "files": {
+    ".nojekyll": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "app.js": "a241bed64eb785265495122e032edcdce9b12bb32bf320e300bfa17d7c00c67b",
+    "audio.js": "5a6948f27b70fa19d9d6b360ce3c5fdbbf280dc8bcefb8364198b7670a7acc52",
+    "icons.js": "d74383c9270b9f3aa73440f27a00ec4b95afa096c763c703c5c351718eb50d7c",
+    "index.html": "36d4ec65886ec87c84782231dd5478afcd8d154cc17e5e8021f350e1d2c5c563",
+    "preview.css": "6413ad772fa7cd7c6cce943288d01ef67fa170a97a4dc9a21b36255191818147",
+    "robots.txt": "331ea9090db0c9f6f597bd9840fd5b171830f6e0b3ba1cb24dfa91f0c95aedc1",
+    "scenarios.js": "ebd3be6a5f2c0b4348f5ff7f1c6eb30effd124f0ed1c8a3433c3058d9c79a9b8",
+    "style.css": "9f9d629626b1f04f58c0251d6b926d3bf9cfc3ea49b07df8cda411028b1a1aac",
+    "transport.js": "1738aeb86ca94ef74d87d7a7991b6f93167944327c414f1c0bb80e0ba3591169",
+    "voice/backpack.mp3": "457b020472742586bfe28f5c84c5ab477298e8eced491ea716a911d5cb9a4b9f",
+    "voice/breakfast.mp3": "63f23283733510f8e6415b36a824d2387562230ac9dc1b3d7d3d648d1aa580a4",
+    "voice/day-clothes.mp3": "06dcc1063580b7e9712b0c1b1b80c411b413353c61a4ae47771d3609fd3a91b6",
+    "voice/door.mp3": "53ca446cbbdbc4390171a2e6b526a53cac7d76a65ec665597b0cdad5b0bb1214",
+    "voice/empty-backpack.mp3": "f17792ebbe33c3e6116683fc1f9f51b8a69a8b16b6b34f5997c02c5d2f989263",
+    "voice/hang-backpack.mp3": "e808d1842e3821baf49e310de5292c4bab65ad82c5bd3106b10c4215e8d19eb1",
+    "voice/home-clothes.mp3": "3c16cfb367b90823caef09e5d4dea4b7aba4154b7946fe1edf44bd3891b06d16",
+    "voice/laundry.mp3": "521d00cdced88f874724e2e23a4a1b1f87c7dc5c34501a0a04dfbcad57a81203",
+    "voice/pjs.mp3": "0a837916d640111dec40d96149ed21fe0a8093bbedcc6b57bc9572acdc896480",
+    "voice/potty.mp3": "0c0a0a115da90e224447a03dbf18fe73c93f8ce92f9a3cb4c8312ca1cc1e9b34",
+    "voice/school-clothes.mp3": "43ed0ff7ec3296147240ce8c6bcdf0c2fa4e2a2f094b06e667d1d924b434a89c",
+    "voice/snack.mp3": "a14a6ba12de1ca4c047dbfd164d62462f5691c9fb86d5482356333acb431d529",
+    "voice/teeth.mp3": "558ea79e757601b80dc242fb44c51b5040274bd83f8f9996a7eac6dd7709cb6b",
+    "voice/tomorrow-backpack.mp3": "f7035c984a9e8f9b93fbb75377805d549e9d36c5ab0b702a0f0ea8e176e958e1"
+  }
+}

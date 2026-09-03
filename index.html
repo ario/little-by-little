@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f5f4ed">
+  <title>Little by little · Preview</title>
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="./preview.css">
+</head>
+<body data-period="morning">
+  <nav class="preview-tools" aria-label="Preview controls"><label for="preview-scenario">Preview</label><select id="preview-scenario" aria-label="Preview routine"></select><button id="preview-reset">Reset</button></nav>
+  <header class="topbar">
+    <div class="period-icon" id="period-icon" aria-hidden="true"></div>
+    <div class="heading"><h1 id="greeting">Little by little</h1><p id="day-label">A little more independent, every day.</p></div>
+    <div class="clock" id="clock"></div>
+    <button class="sound-button" id="mute" aria-label="Mute celebration sounds" aria-pressed="false"></button>
+  </header>
+  <main id="board" aria-label="Our routines"></main>
+  <section id="pause" hidden>
+    <div class="pause-art" id="pause-art"></div>
+    <p class="small-title">Little by little</p>
+    <h2>All done for now.</h2>
+    <p id="pause-copy">On the G49, Newspaper returns now. Choose another routine above, or try this one again.</p>
+    <button class="practice-button" id="practice-open" hidden>Try a practice routine</button>
+    <button class="text-button" id="pause-exit" hidden>Back to Newspaper</button>
+    <button class="practice-button" id="preview-again">Try again</button>
+  </section>
+  <p class="preview-note">A fresh preview for you to try. Changes here stay on this page.</p>
+  <aside id="practice-bar" hidden><span>Practice · nothing here is saved</span><button id="practice-stop">Finish practice</button></aside>
+  <div id="notice" role="status" aria-live="polite"></div>
+  <div id="party" aria-hidden="true"><div class="party-label"><span id="party-kicker">Look at you go!</span><strong id="party-name"></strong><span>All done!</span></div></div>
+  <canvas id="confetti" aria-hidden="true"></canvas>
+  <dialog id="practice-dialog"><h2>Let’s try it out</h2><p>Practice has its own fresh list.</p><div class="practice-kind"><button data-kind="school" aria-pressed="true">School day</button><button data-kind="dayoff" aria-pressed="false">Day off</button></div><div class="practice-choices"><button data-routine="morning">Morning</button><button data-routine="afternoon">Coming home</button><button data-routine="evening">Bedtime</button></div><button class="text-button" id="practice-cancel">Go back</button></dialog>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
