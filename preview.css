@@ -4,10 +4,10 @@
 html{height:auto;min-height:100%;overflow-x:hidden;overflow-y:auto;scroll-padding-top:calc(52px + var(--safe-top))}
 body{height:auto;min-height:var(--viewport-height);overflow:visible;touch-action:pan-y pinch-zoom;-webkit-text-size-adjust:100%;padding-left:var(--safe-left);padding-right:var(--safe-right);padding-bottom:max(14svh,var(--safe-bottom));}
 button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
-.preview-tools{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:10px;padding:calc(6px + var(--safe-top)) 14px 6px;background:#f7f6f2;color:#515765;border-bottom:1px solid #deddd6;font-size:12px}
+.preview-tools{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:10px;padding:calc(6px + var(--safe-top)) 14px 6px;background:var(--controls);color:var(--control-text);border-bottom:1px solid var(--control-line);font-size:12px}
 .preview-tools label{font-weight:bold;letter-spacing:.5px;text-transform:uppercase}
-.preview-tools select{flex:1;min-width:0;height:40px;border:1px solid #d4d6d5;border-radius:10px;background:white;color:#394350;font:inherit;font-size:16px;padding:0 8px}
-.preview-tools button{background:transparent;color:#49596d;min-height:44px;min-width:44px;font-weight:bold;font-size:13px}
+.preview-tools select{flex:1;min-width:0;height:40px;border:1px solid var(--control-line);border-radius:10px;background:var(--control-fill);color:var(--control-text);font:inherit;font-size:16px;padding:0 8px}
+.preview-tools button{background:transparent;color:var(--control-text);min-height:44px;min-width:44px;font-weight:bold;font-size:13px}
 .topbar{height:76px;padding:10px 16px;gap:10px}
 .period-icon{width:44px;height:44px}.heading h1{font-size:24px;letter-spacing:-.8px}.heading p{font-size:12px;margin-top:4px}.clock{display:none}.sound-button{width:44px;height:44px;margin-left:auto;padding:9px}
 #board{max-width:700px;margin:0 auto}

@@ -10,15 +10,24 @@ const reduced=matchMedia('(prefers-reduced-motion: reduce)');
 let particles=[], raf=0,lastFrame=0;
 const canvas=$('confetti'), ctx=canvas.getContext('2d',{alpha:true});
 const colors=['#edacc8','#f2bd70','#7abed7','#b8d5a0','#b8a5da'];
+function setPeriod(period){
+  document.body.dataset.period=period;
+  const root=document.documentElement;if(root.dataset.period===period)return;
+  root.dataset.period=period;root.style.colorScheme=period==='evening'?'dark':'light';
+  const base={morning:'#fff9e9',afternoon:'#e4d4b8',evening:'#1d1612'}[period];
+  root.style.backgroundColor=base;
+  document.querySelector('meta[name="theme-color"]').content=base;
+}
 function canvasSize(){canvas.width=Math.round(innerWidth*.5);canvas.height=Math.round(innerHeight*.5);}
 canvasSize();addEventListener('resize',canvasSize);
 function confetti(x,y,large=false){
   if(reduced.matches)return;
   const night=state?.context?.routine==='evening';
+  const palette=night?['#b17e59','#c09563','#ba8c73','#958773','#cca176']:colors;
   const count=large?(night?60:130):18;
   for(let i=0;i<count;i++){
     const a=Math.random()*Math.PI*2;
-    particles.push({x:x*.5,y:y*.5,vx:Math.cos(a)*(large?145:75),vy:Math.sin(a)*(large?170:100)-(large?90:40),age:0,life:large?3.8:1,color:colors[i%5],r:Math.random()*6.3,size:large?5:3});
+    particles.push({x:x*.5,y:y*.5,vx:Math.cos(a)*(large?145:75),vy:Math.sin(a)*(large?170:100)-(large?90:40),age:0,life:large?3.8:1,color:palette[i%5],r:Math.random()*6.3,size:large?5:3});
   }
   particles=particles.slice(-240);
   if(!raf){lastFrame=performance.now();raf=requestAnimationFrame(draw);}
@@ -74,12 +83,12 @@ function render(next,force=false){
   $('board').hidden=!current;$('pause').hidden=!!current;
   $('practice-bar').hidden=!current?.practice;document.body.classList.toggle('practice',!!current?.practice);
   if(!current){
-    document.body.dataset.period='morning';$('greeting').textContent='Little by little';$('day-label').textContent='One small thing at a time.';
-    $('period-icon').innerHTML=icon('sun');$('pause-art').innerHTML=cat(true);
+    const period=document.body.dataset.period||'morning';setPeriod(period);$('greeting').textContent='Little by little';$('day-label').textContent='One small thing at a time.';
+    $('period-icon').innerHTML=icon(period==='evening'?'moon':period==='afternoon'?'afternoon':'sun');$('pause-art').innerHTML=cat(true);
     if(state.calendar_unknown)$('pause-copy').textContent='Your calendar needs an update. You can still practice a routine.';
     return;
   }
-  document.body.dataset.period=current.routine;
+  setPeriod(current.routine);
   const greetings={morning:'Hello, new day!',afternoon:'Welcome home!',evening:'Time to wind down'};
   $('greeting').textContent=greetings[current.routine];
   if(keyChanged)$('period-icon').innerHTML=icon(current.routine==='morning'?'sun':current.routine==='evening'?'moon':'afternoon');
