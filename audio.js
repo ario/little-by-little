@@ -1,5 +1,6 @@
 let context, master, volume = 1, speech, speechLevel = 1, speechNodes, speechToken = 0;
 const voiceBuffers=new Map();
+let finishReading=null,voiceRequest=Promise.resolve();
 const choices=new Map();
 function pick(key,count){
   let bag=choices.get(key);
@@ -61,10 +62,70 @@ export function sound(period,party=false){
   if(effect===9){[0,.13,.26].forEach((a,i)=>tone(900-i*170,t+a,.13,'triangle',g*.55,300-i*50));}
 }
 export function stopSpeech(){
+  const finish=finishReading;finishReading=null;
   if('speechSynthesis' in window)window.speechSynthesis.cancel();
   speechToken++;
   if(speech){speech.pause();speech.currentTime=0;speech=null;}
   if(speechNodes){try{speechNodes.source.stop();}catch{}speechNodes.source.disconnect();speechNodes.gain.disconnect();speechNodes=null;}
+  if(finish)finish();
+}
+
+// All UI narration shares task/calendar cancellation and volume, including on iOS.
+// Serialize generation so a rapid new tap never races an older Pi voice job.
+export async function readAloud(text,period,load,onError){
+  text=String(text||'').replace(/\s*[·•]\s*/g,'. ').replace(/\s+[–—]\s+/g,' to ').replace(/[☾‹›]|\p{Extended_Pictographic}|[\uFE0F\u200D]/gu,' ').replace(/\s+/g,' ').trim();
+  if(!text)return;
+  stopSpeech();const token=speechToken;unlock();
+  audioStats.lastSpokenText=text;audioStats.readings=(audioStats.readings||0)+1;
+  const chunks=[];let rest=text;
+  while(rest.length){let end=Math.min(260,rest.length);if(end<rest.length){const space=rest.lastIndexOf(' ',end);if(space>0)end=space;}chunks.push(rest.slice(0,end));rest=rest.slice(end).trimStart();}
+  function queuedLoad(chunk){
+    const request=voiceRequest.catch(()=>{}).then(async()=>{
+      const deadline=performance.now()+8000;
+      while(token===speechToken){
+        let timer;
+        const left=deadline-performance.now();if(left<=0)throw Error('Voice timed out');
+        let result;
+        try{result=await Promise.race([load(chunk),new Promise((_,reject)=>timer=setTimeout(()=>reject(Error('Voice timed out')),left))]);}
+        finally{clearTimeout(timer);}
+        if(token!==speechToken)return null;
+        if(!result.busy)return result;
+        await new Promise(resolve=>setTimeout(resolve,250));
+      }
+      return null;
+    });
+    voiceRequest=request;request.catch(()=>{});return request;
+  }
+  try{
+    let pending=queuedLoad(chunks[0]);
+    for(let index=0;index<chunks.length;index++){
+      const result=await pending;if(!result||token!==speechToken)return;
+      // Generate only one chunk ahead while the current chunk is being spoken.
+      if(index+1<chunks.length)pending=queuedLoad(chunks[index+1]);
+      if(result.text&&'speechSynthesis' in window){
+        await new Promise((resolve,reject)=>{
+          const words=new SpeechSynthesisUtterance(result.text);words.volume=volume*(period==='evening'?.55:.85);words.rate=.88;
+          const finish=()=>{if(finishReading===finish)finishReading=null;resolve();};finishReading=finish;
+          words.onstart=()=>{audioStats.playbackStarts++;};words.onend=finish;
+          words.onerror=e=>{if(token!==speechToken||e.error==='canceled'||e.error==='interrupted')finish();else{if(finishReading===finish)finishReading=null;reject(Error('Speech unavailable'));}};
+          window.speechSynthesis.speak(words);
+        });
+      }else{
+        if(!context)throw Error('Audio unavailable');
+        const raw=Uint8Array.from(atob(result.audio),c=>c.charCodeAt(0));
+        const buffer=await context.decodeAudioData(raw.buffer);if(token!==speechToken)return;
+        await context.resume();if(token!==speechToken)return;
+        await new Promise(resolve=>{
+          const source=context.createBufferSource(),gain=context.createGain();
+          source.buffer=buffer;gain.gain.value=period==='evening'?.55:.85;source.connect(gain).connect(master);
+          const nodes={source,gain};speechNodes=nodes;
+          const finish=()=>{if(finishReading===finish)finishReading=null;if(speechNodes===nodes){source.disconnect();gain.disconnect();speechNodes=null;}resolve();};
+          finishReading=finish;source.onended=finish;source.start();audioStats.playbackStarts++;
+        });
+      }
+    }
+    return token===speechToken?true:undefined;
+  }catch{if(token===speechToken){audioStats.errors++;onError('The voice couldn’t play. Tap to try again.');return false;}}
 }
 export async function narrate(task,period,onError){
   stopSpeech();const token=speechToken;
@@ -99,20 +160,3 @@ export async function narrate(task,period,onError){
   }catch{if(token===speechToken){audioStats.errors++;onError('The voice couldn’t play. Tap to try again.');}}
 }
 
-// Dynamic calendar speech shares the same master gain and cancellation token as tasks.
-export async function narrateCalendar(load,period,onError){
-  stopSpeech();const token=speechToken;unlock();
-  try{
-    const result=await load();if(token!==speechToken)return;
-    if(result.text&&'speechSynthesis' in window){
-      const words=new SpeechSynthesisUtterance(result.text);words.volume=volume*(period==='evening'?.55:.85);words.rate=.88;
-      window.speechSynthesis.speak(words);return;
-    }
-    if(!context)throw new Error('Audio unavailable');
-    const raw=Uint8Array.from(atob(result.audio),c=>c.charCodeAt(0));
-    const buffer=await context.decodeAudioData(raw.buffer);if(token!==speechToken)return;
-    await context.resume();if(token!==speechToken)return;
-    const source=context.createBufferSource(),gain=context.createGain();source.buffer=buffer;gain.gain.value=period==='evening'?.55:.85;source.connect(gain).connect(master);speechNodes={source,gain};source.onended=()=>{if(token===speechToken)stopSpeech();};source.start();audioStats.playbackStarts++;
-  }catch{if(token===speechToken){onError('The voice couldn’t play. Tap to try again.');return false;}}
-  return true;
-}

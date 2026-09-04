@@ -1,7 +1,7 @@
 import {cat,bricks,icon} from './icons.js';
 import {add,number,monday,monthMove,monthCells,label,bounds,clock,until,dayDistance,localDay} from './calendar-date.js';
 import {readCalendar,calendarVoice} from './transport.js';
-import {narrateCalendar,stopSpeech,unlock} from './audio.js';
+import {readAloud,stopSpeech} from './audio.js';
 
 const profiles=[{id:'negaan',name:'Negaan',theme:'cat'},{id:'neev',name:'Neev',theme:'bricks'}];
 const $=id=>document.getElementById(id);
@@ -29,12 +29,29 @@ function build(profile){const section=node('section',`child calendar-child ${pro
  content.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'&&e.button!==0)return;if(pointer){pointer=null;return;}pointer={id:e.pointerId,x:e.clientX,y:e.clientY,vertical:false};});
  content.addEventListener('pointermove',e=>{if(pointer?.id===e.pointerId&&Math.abs(e.clientY-pointer.y)>15)pointer.vertical=true;});
  content.addEventListener('pointercancel',()=>pointer=null);
- content.addEventListener('pointerup',e=>{if(pointer?.id!==e.pointerId)return;const p=pointer;pointer=null;if(!p.vertical&&!view.detail&&Math.abs(e.clientX-p.x)>70&&Math.abs(e.clientY-p.y)<25){view.suppressClick=true;setTimeout(()=>view.suppressClick=false,0);move(view,e.clientX<p.x?1:-1);}});
+ content.addEventListener('pointerup',e=>{if(pointer?.id!==e.pointerId)return;const p=pointer;pointer=null;if(p.vertical){view.suppressClick=true;setTimeout(()=>view.suppressClick=false,0);return;}if(!p.vertical&&!view.detail&&Math.abs(e.clientX-p.x)>70&&Math.abs(e.clientY-p.y)<25){view.suppressClick=true;setTimeout(()=>view.suppressClick=false,0);move(view,e.clientX<p.x?1:-1);}});
  return section;
 }
-function move(view,n){stopSpeech();view.detail=null;const next=view.zoom==='month'?monthMove(view.day,n):add(view.day,n*(view.zoom==='week'?7:1));if(available(next)){view.day=next;render(view);}else{view.section.querySelector('.calendar-status').textContent='That date is outside your saved calendar.';}}
-async function speak(view,event=null){if(view.id!=='neev')return;const status=view.section.querySelector('.calendar-status');unlock();status.textContent='Getting your voice ready…';const ok=await narrateCalendar(()=>calendarVoice({child:view.id,date:view.day,event:event?.id||null}),document.body.dataset.period,msg=>status.textContent=msg);if(active&&ok!==false)statusText(view);}
-function click(view,e){if(view.suppressClick){e.preventDefault();return;}const target=e.target.closest('button[data-action]');if(!target)return;const action=target.dataset.action;
+function move(view,n){stopSpeech();view.detail=null;const next=view.zoom==='month'?monthMove(view.day,n):add(view.day,n*(view.zoom==='week'?7:1));if(available(next)){view.day=next;render(view);readWords(view,viewWords(view));}else{view.section.querySelector('.calendar-status').textContent='That date is outside your saved calendar.';readWords(view,'That date is outside your saved calendar.','That date is outside your saved calendar.');}}
+async function readWords(view,text,restore=null){
+ if(view.id!=='neev'||!text)return;
+ const reading=(view.reading||0)+1;view.reading=reading;
+ view.section.querySelector('.calendar-status').textContent='Getting your voice ready…';
+ const ok=await readAloud(text,document.body.dataset.period,ui_text=>calendarVoice({child:'neev',ui_text}),msg=>{if(view.reading===reading)view.section.querySelector('.calendar-status').textContent=msg;});
+ if(view.reading===reading&&ok!==false){if(restore)view.section.querySelector('.calendar-status').textContent=restore;else statusText(view);}
+}
+function viewWords(view){return view.detail?view.section.querySelector('.calendar-detail').innerText.replace('‹ Back to calendar','').replace('Hear it again',''):view.zoom==='day'?`${dayDistance(view.day,selectedToday())}. ${label(view.day)}.`:view.section.querySelector('.calendar-range')?.textContent;}
+function speak(view,event=null){return readWords(view,event?viewWords(view):`${label(view.day)}. ${view.section.querySelector('.calendar-agenda')?.innerText||''}`);}
+function staticWords(view,target){
+ if(target.closest('.mascot'))return `${view.name}. A little look ahead.`;
+ if(target.closest('.date-number'))return label(view.day);
+ if(target.closest('.sleep-moons'))return view.section.querySelector('.detail-countdown').textContent;
+ const words=target.closest('h2,h3,p,strong,span,button');
+ return words?.getAttribute('aria-label')||words?.innerText||viewWords(view);
+}
+function click(view,e){if(view.suppressClick){e.preventDefault();return;}const target=e.target.closest('button[data-action]');
+ if(!target){readWords(view,staticWords(view,e.target));return;}
+ const action=target.dataset.action;
  if(action==='hear'){speak(view,view.detail);return;}
  stopSpeech();
  if(action==='previous'||action==='next'){move(view,action==='next'?1:-1);return;}
@@ -44,10 +61,11 @@ function click(view,e){if(view.suppressClick){e.preventDefault();return;}const t
  if(action==='event'){view.opener=target.dataset.event;view.detail=(data?.children[view.id]||[]).find(x=>x.id===target.dataset.event);}
  if(action==='close')view.detail=null;
  render(view);
- if(action==='event'&&view.detail){view.section.querySelector('.detail-close').focus({preventScroll:true});if(view.id==='neev')speak(view,view.detail);}
+ if(action==='event'&&view.detail){view.section.querySelector('.detail-close').focus({preventScroll:true});speak(view,view.detail);}
+ else if(view.zoom==='day')speak(view);else readWords(view,`${view.zoom}. ${viewWords(view)}`);
  if(action==='close'&&view.opener)view.section.querySelector(`[data-event="${view.opener}"]`)?.focus({preventScroll:true});
 }
-function statusText(view){const e=view.section.querySelector('.calendar-status');e.classList.toggle('needs-update',Boolean(data?.stale));if(!data?.available)e.textContent=data?.expired?'Your calendar needs an update. Ask a grown-up to reconnect it.':'Your calendar is connecting. Ask a grown-up to check back.';else if(data.stale)e.textContent=`Plans may have changed. Ask a grown-up to check. Saved calendar · last updated ${label(localDay(data.generated_at),{month:'short',day:'numeric'})} at ${clock(data.generated_at)}`;else e.textContent=data.demo?'Example calendar · real plans stay private':view.id==='neev'?'Tap an event to open it and hear it.':'Tap an event to see more.';}
+function statusText(view){const e=view.section.querySelector('.calendar-status');e.classList.toggle('needs-update',Boolean(data?.stale));if(!data?.available)e.textContent=data?.expired?'Your calendar needs an update. Ask a grown-up to reconnect it.':'Your calendar is connecting. Ask a grown-up to check back.';else if(data.stale)e.textContent=`Plans may have changed. Ask a grown-up to check. Saved calendar · last updated ${label(localDay(data.generated_at),{month:'short',day:'numeric'})} at ${clock(data.generated_at)}`;else e.textContent=data.demo?'Example calendar · real plans stay private':view.id==='neev'?'Tap anything in your section to hear it.':'Tap an event to see more.';}
 function render(view){const start=performance.now(),content=view.section.querySelector('.calendar-content');content.replaceChildren();content.scrollTop=0;view.section.classList.toggle('show-detail',!!view.detail);
  for(const b of view.section.querySelectorAll('[data-zoom]'))b.setAttribute('aria-pressed',String(b.dataset.zoom===view.zoom));
  for(const b of view.section.querySelectorAll('[data-action="previous"],[data-action="next"]')){const n=b.dataset.action==='next'?1:-1;b.disabled=!available(view.zoom==='month'?monthMove(view.day,n):add(view.day,n*(view.zoom==='week'?7:1)));}
