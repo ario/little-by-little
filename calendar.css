@@ -7,3 +7,12 @@ body.calendar-mode{touch-action:pan-y}
 .big-days{margin-top:22px}.big-days h3{font-size:24px;margin:0 0 12px}.big-day-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.big-day{display:grid;grid-template-columns:44px 1fr;gap:4px 10px;text-align:left;padding:15px;border:2px solid var(--line);border-radius:18px;background:var(--soft);min-height:83px}.big-day>span:first-child{font-size:34px;grid-row:1/3;align-self:center}.big-day strong{font-size:22px;overflow-wrap:anywhere}.big-day>span:last-child{font-size:18px;color:var(--muted)}@media(max-width:700px){.big-days h3{font-size:20px}.big-day-grid{gap:8px}.big-day{grid-template-columns:1fr;padding:12px;gap:6px;min-height:125px}.big-day>span:first-child{font-size:29px;grid-row:auto}.big-day strong{font-size:16px}.big-day>span:last-child{font-size:13px}}
 
 .calendar-status.needs-update{padding:8px 12px;border:2px solid currentColor;border-radius:12px;background:var(--panel-bg,transparent);font-weight:700;}
+
+/* Recognizable pictures for pre-readers; calendar scale retains short learning labels. */
+.control-glyph{display:block;width:38px;height:38px;flex:none}.control-glyph g{stroke-width:4.5}
+.mode-switch button{display:flex;align-items:center;justify-content:center;min-width:78px;min-height:62px;padding:8px 20px}
+.picture-control{display:inline-flex;align-items:center;justify-content:center;gap:9px}.picture-control .control-caption{line-height:1.1}
+.calendar-zoom .picture-control{padding:8px 17px}.calendar-zoom .control-glyph{width:32px;height:32px}
+.calendar-today.picture-control{display:flex}.calendar-today .control-glyph{width:29px;height:29px}
+.hear-day.picture-control,.detail-close.picture-control{width:58px;min-height:54px;padding:9px}.hear-day .control-glyph,.detail-close .control-glyph{width:34px;height:34px}
+@media(max-width:700px){.mode-switch button{min-width:98px;min-height:44px;padding:3px 24px}.mode-switch .control-glyph{width:36px;height:36px}.calendar-zoom .picture-control{flex-direction:column;gap:3px;min-width:53px;min-height:60px;padding:5px 9px}.calendar-zoom .control-glyph{width:29px;height:29px}.calendar-zoom .control-caption{font-size:12px}.calendar-today.picture-control{gap:5px;padding:7px 10px}.calendar-today .control-glyph{width:24px;height:24px}.hear-day.picture-control,.detail-close.picture-control{width:48px;min-height:46px;padding:7px}.date-anchor .hear-day.picture-control{justify-self:end;grid-column:2;grid-row:4}.hear-day .control-glyph,.detail-close .control-glyph{width:30px;height:30px}}

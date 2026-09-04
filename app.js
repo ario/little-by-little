@@ -234,8 +234,10 @@ function switchMode(calendar){
   for(const p of pointers.values())resetDrag(p.row);pointers.clear();stopSpeech();
   showCalendar(calendar);$('mode-calendar').setAttribute('aria-pressed',String(calendar));$('mode-todos').setAttribute('aria-pressed',String(!calendar));
 }
-$('mode-calendar').addEventListener('click',()=>switchMode(true));
-$('mode-todos').addEventListener('click',()=>switchMode(false));
+for(const [id,glyph,label,isCalendar] of [['mode-calendar','calendar','Calendar',true],['mode-todos','checklist','To do’s',false]]){
+ const control=$(id);control.innerHTML=icon(glyph,'control-glyph');control.setAttribute('aria-label',label);control.title=label;
+ control.addEventListener('click',()=>{switchMode(isCalendar);readNeev(isCalendar?'Calendar. Let’s look at your days.':'To do’s. Let’s do our little steps.');});
+}
 $('practice-open').addEventListener('click',()=>$('practice-dialog').showModal());
 let parentPair=null,parentPoll=null,parentRequest=0;
 async function updateParentPair(){

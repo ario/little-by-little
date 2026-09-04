@@ -20,6 +20,12 @@ const icons = {
   check: '<path d="m18 41 15 15 30-33"/>',
   speaker: '<path d="M13 32h14l17-13v42L27 48H13Z" fill="currentColor" stroke-width="2"/><path d="M54 29q11 11 0 22M63 19q22 21 0 42"/>',
   mute: '<path d="M13 32h14l17-13v42L27 48H13Z" fill="currentColor" stroke-width="2"/><path d="m56 31 18 18m0-18L56 49"/>',
+  calendar: '<rect x="13" y="17" width="54" height="52" rx="9"/><path d="M13 32h54M27 10v14M53 10v14"/><path d="M27 43h2m10 0h2m10 0h2M27 55h2m10 0h2m10 0h2" stroke-width="7"/>',
+  checklist: '<rect x="13" y="11" width="54" height="58" rx="9"/><path d="m23 28 4 4 7-9M42 28h13m-32 20 4 4 7-9M42 48h13"/>',
+  day: '<rect x="13" y="17" width="54" height="52" rx="9"/><path d="M13 32h54M27 10v14M53 10v14"/><circle cx="40" cy="50" r="10" fill="currentColor" stroke="none"/>',
+  week: '<rect x="9" y="17" width="62" height="52" rx="9"/><path d="M9 32h62M25 10v14M55 10v14M18 50h1m6 0h1m6 0h1m6 0h1m6 0h1m6 0h1m6 0h1" stroke-width="5"/>',
+  today: '<circle cx="40" cy="40" r="24"/><circle cx="40" cy="40" r="9" fill="currentColor" stroke="none"/><path d="M40 8v12M40 60v12M8 40h12M60 40h12"/>',
+  back: '<path d="M65 40H17m18-19L16 40l19 19"/>',
   arrow: '<path d="M15 40h47M47 23l17 17-17 17"/>',
 };
 export function icon(name, cls) { return wrap(icons[name] || icons.check, cls); }
