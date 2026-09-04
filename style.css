@@ -71,3 +71,7 @@ body[data-period="evening"] #practice-bar button{color:#dabe98}
 @media(max-width:700px){.closing-directive{font-size:17px;margin-top:10px;padding:12px 14px;gap:10px}.closing-replay{width:44px;height:44px;padding:10px}.party-label .party-closing{font-size:21px;max-width:320px}}
 
 #party.visible .party-label{pointer-events:auto}
+
+.reward-menu{position:fixed;inset:14vh 4vw auto;z-index:35;background:var(--surface,#fffaf0);color:var(--ink,#263b42);border:3px solid #d7dfda;border-radius:36px;padding:4vw;text-align:center;box-shadow:0 10px 60px #0003}.reward-menu h2{font-size:clamp(30px,5vw,64px);margin:0}.reward-menu p{font-size:clamp(20px,3vw,34px)}.reward-choices{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:24px 0}.reward-choices button{background:#fff8e9;border:2px solid #d7dfda;border-radius:24px;padding:24px 10px;color:#263b42}.reward-choices span{display:block;font-size:clamp(50px,8vw,110px)}.reward-choices strong,.reward-choices small{display:block;font-size:clamp(18px,2.8vw,34px);margin-top:12px}.reward-choices small{font-size:clamp(15px,2vw,26px)}.reward-back{font-size:24px;padding:16px;border-radius:18px}@media(max-width:600px){.reward-menu{inset:15vh 12px auto;padding:20px}.reward-choices{gap:8px}.reward-choices button{padding:18px 4px}.reward-choices strong{font-size:16px}.reward-choices small{font-size:13px}}
+
+.reward-reopen{position:fixed;right:24px;bottom:40px;z-index:34;border:2px solid #cad7ce;border-radius:20px;background:#fff8e9;color:#263b42;padding:18px 24px;font-size:clamp(22px,3vw,36px)}

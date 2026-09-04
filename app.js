@@ -167,7 +167,7 @@ function render(next,force=false){
     const dots=section.querySelector('.progress-dots'),pattern=child.tasks.map(t=>t.done?'1':'0').join('');
     if(dots.dataset.pattern!==pattern){dots.innerHTML=child.tasks.map(t=>`<i class="${t.done?'filled':''}"></i>`).join('');dots.dataset.pattern=pattern;}
     let foot=child.complete?'Beautifully done.':'';
-    if(state.close_at&&!current.practice){const left=Math.max(0,Math.ceil((state.close_at-state.server_time)/60));foot=`Newspaper in ${left} min`;}
+    if(state.close_at&&!current.practice){const left=Math.max(0,Math.ceil((state.close_at-state.server_time)/60));foot=`App menu in ${left} min`;}
     textIfChanged(section.querySelector('.child-foot strong'),foot);
     for(const task of child.tasks){
       const row=rows.get(`${child.id}:${task.id}`);if(row.classList.contains('pending'))continue;
@@ -181,6 +181,28 @@ function render(next,force=false){
     }
   }
 }
+const rewardMenu=document.createElement('section');rewardMenu.className='reward-menu';rewardMenu.hidden=true;
+rewardMenu.innerHTML='<h2>You did it together!</h2><p>Choose something fun.</p><div class="reward-choices"><button data-game="sky-hopper"><span>🐦</span><strong>Sky Hopper</strong><small>Tap to fly</small></button><button data-game="light-tiles"><span>✦</span><strong>Light Tiles</strong><small>Watch, remember, tap</small></button><button data-game="brick-breaker"><span>▦</span><strong>Brick Breaker</strong><small>Slide to bounce</small></button></div><button class="reward-back">↩ See your lists</button><p class="reward-status" role="status"></p>';
+document.body.append(rewardMenu);
+const rewardReopen=document.createElement('button');rewardReopen.className='reward-reopen';rewardReopen.textContent='🎮 Games';rewardReopen.hidden=true;document.body.append(rewardReopen);
+rewardReopen.onclick=()=>{rewardHidden=null;updateReward();};
+let rewardSeen=null,rewardHidden=null,rewardOpening=false;
+rewardMenu.querySelector('.reward-back').onclick=()=>{rewardHidden=state?.context?.key;rewardMenu.hidden=true;};
+for(const button of rewardMenu.querySelectorAll('[data-game]'))button.onclick=async()=>{
+ if(rewardOpening)return;rewardOpening=true;stopSpeech();
+ const status=rewardMenu.querySelector('.reward-status');status.textContent='Opening your game…';
+ try{const result=await api('/api/reward/game',{game:button.dataset.game,occurrence:state.context.key});
+ if(result.preview){location.assign('game.html#'+(button.dataset.game==='sky-hopper'?'':button.dataset.game));}
+ }catch(e){status.textContent=e.message;rewardOpening=false;}
+};
+function updateReward(){
+ const ready=state?.context?.routine==='afternoon'&&!state.context.practice&&!state.dismissed&&state.children.length>0&&state.children.every(c=>c.complete)&&state.close_at&&state.reward_at&&state.server_time>=state.reward_at;
+ if(!ready){rewardReopen.hidden=true;rewardMenu.hidden=true;rewardSeen=null;rewardHidden=null;rewardOpening=false;return;}
+ if(state.game_launch?.error){rewardOpening=false;rewardMenu.querySelector('.reward-status').textContent=state.game_launch.error;}
+ rewardMenu.hidden=rewardHidden===state.context.key;rewardReopen.hidden=!rewardMenu.hidden;
+ if(!rewardMenu.hidden&&rewardSeen!==state.context.key){rewardSeen=state.context.key;stopSpeech();narrate({id:'reward-games'},'afternoon',notice);}
+}
+setInterval(updateReward,250);
 function findTask(child,id){return state?.children.find(c=>c.id===child)?.tasks.find(t=>t.id===id);}
 function threshold(){return Math.min(innerWidth*.33,Math.hypot(innerWidth,innerHeight)/49*3.5);}
 function pointerDown(e){

@@ -31,6 +31,7 @@ export function subscribe(listener){listeners.push(listener);}
 export async function request(path,body){
   snapshot();
   if(path==='/api/state')return {ok:true,payload:snapshot()};
+  if(path==='/api/reward/game')return {ok:true,payload:{preview:true}};
   if(path!=='/api/task')return {ok:false,payload:{error:'Choose a routine in the preview bar.'}};
   const child=current.children.find(c=>c.id===body?.child);
   const task=child?.tasks.find(t=>t.id===body?.task);
@@ -46,9 +47,9 @@ export async function request(path,body){
   if(current.children.every(c=>c.complete)){
     if(closeDeadline===null){
       const delay=graceSeconds+(celebrate?celebrationSeconds:0);
-      closeDeadline=Date.now()+delay*1000;current.close_at=current.server_time+delay;
+      closeDeadline=Date.now()+delay*1000;current.close_at=current.server_time+delay;current.reward_at=current.close_at-graceSeconds;
     }
-  }else{closeDeadline=null;current.close_at=null;}
+  }else{closeDeadline=null;current.close_at=null;current.reward_at=null;}
   return {ok:true,payload:{state:snapshot(),reward,celebrate,child:child.id}};
 }
 import {setVolume} from './audio.js';
