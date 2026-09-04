@@ -63,3 +63,9 @@ body[data-period="evening"] #practice-bar button{color:#dabe98}
 @media(max-width:700px){.volume-panel{width:290px;padding:18px 20px 14px;border-radius:20px}.volume-heading{font-size:19px}.volume-heading output{font-size:17px}#volume-slider{height:48px}.volume-ends{font-size:13px}#volume-status{font-size:14px}}
 
 .task-text{overflow-wrap:anywhere}
+
+/* A closing instruction is a send-off, never another checkbox. */
+.closing-directive{display:flex;align-items:center;gap:14px;flex:none;margin-top:12px;padding:16px 20px;border:2px solid var(--accent);border-radius:20px;background:var(--soft);color:var(--accent);font-size:25px;line-height:1.3;font-weight:bold}
+.closing-copy{flex:1;min-width:0}.closing-replay{width:52px;height:52px;flex:none;padding:12px;border-radius:50%;background:var(--wash);color:var(--accent)}
+.party-label .party-closing{font-size:30px;line-height:1.3;max-width:560px;margin:8px 0 0;font-weight:bold;letter-spacing:-.4px}
+@media(max-width:700px){.closing-directive{font-size:17px;margin-top:10px;padding:12px 14px;gap:10px}.closing-replay{width:44px;height:44px;padding:10px}.party-label .party-closing{font-size:21px;max-width:320px}}
