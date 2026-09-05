@@ -182,7 +182,7 @@ function render(next,force=false){
   }
 }
 const rewardMenu=document.createElement('section');rewardMenu.className='reward-menu';rewardMenu.hidden=true;
-rewardMenu.innerHTML='<h2>You did it together!</h2><p>Choose something fun.</p><div class="reward-choices"><button data-game="sky-hopper"><span>🐦</span><strong>Sky Hopper</strong><small>Tap to fly</small></button><button data-game="light-tiles"><span>✦</span><strong>Light Tiles</strong><small>Watch, remember, tap</small></button><button data-game="brick-breaker"><span>▦</span><strong>Brick Breaker</strong><small>Slide to bounce</small></button></div><button class="reward-back">↩ See your lists</button><p class="reward-status" role="status"></p>';
+rewardMenu.innerHTML='<h2>You did it together!</h2><p>Choose something fun.</p><div class="reward-choices"><button data-game="sky-hopper"><img src="games/thumbnails/sky-hopper.png" alt="Sky Hopper game screen"><strong>Sky Hopper</strong><small>Tap to fly</small></button><button data-game="light-tiles"><img src="games/thumbnails/light-tiles.png" alt="Light Tiles game screen"><strong>Light Tiles</strong><small>Watch, remember, tap</small></button><button data-game="brick-breaker"><img src="games/thumbnails/brick-breaker.png" alt="Brick Breaker game screen"><strong>Brick Breaker</strong><small>Slide to bounce</small></button></div><button class="reward-back">↩ See your lists</button><p class="reward-status" role="status"></p>';
 document.body.append(rewardMenu);
 const rewardReopen=document.createElement('button');rewardReopen.className='reward-reopen';rewardReopen.textContent='🎮 Games';rewardReopen.hidden=true;document.body.append(rewardReopen);
 rewardReopen.onclick=()=>{rewardHidden=null;updateReward();};
